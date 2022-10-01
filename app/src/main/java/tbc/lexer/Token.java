@@ -1,5 +1,7 @@
 package tbc.lexer;
 
+import java.util.Objects;
+
 public abstract class Token<T> {
     private int row;
     private int column;
@@ -43,6 +45,23 @@ public abstract class Token<T> {
 
     public void decrementColumn() {
         column--;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Token<?> token = (Token<?>) o;
+        return row == token.row && column == token.column && value.equals(token.value) && type == token.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, column, value, type);
     }
 
 }

@@ -1,8 +1,10 @@
 package tbc.lexer;
 
 public enum TokenType {
-    KEYWORD,
+    LINE,
+    STATEMENT,
     NUMBER,
+    KEYWORD,
     STRING,
     EXPRESSION,
     TERM,

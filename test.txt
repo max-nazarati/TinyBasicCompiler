@@ -1,4 +1,4 @@
-1 lajsdf alj
+1 PRINT "hello world"
 2 slfdjaf
 s  ljasdf;j asdf
 500 lajdsf

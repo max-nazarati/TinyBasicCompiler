@@ -1,5 +1,6 @@
 package tbc.lexer;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Tokeniser {
@@ -14,6 +15,10 @@ public class Tokeniser {
         } else {
             throw new RuntimeException("LINE PARSING FAILED");
         }
+    }
+
+    public static List<KeywordToken> tokeniseKeywords(Token<String> line) {
+        return null;
     }
 
 }

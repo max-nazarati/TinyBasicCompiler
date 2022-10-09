@@ -59,18 +59,18 @@ class TokeniserTest {
             // GIVEN
             var line = new LineToken(1, 0, "100 PRINT a IF aa THEN aaa GOTO a INPUT a LET A GOSUB A RETURN a CLEAR LIST RUN END");
             var expectedTokens = List.of(
-                    new KeywordToken(1, 5, "PRINT"),
-                    new KeywordToken(1, 13, "IF"),
-                    new KeywordToken(1, 19, "THEN"),
-                    new KeywordToken(1, 28, "GOTO"),
-                    new KeywordToken(1, 35, "INPUT"),
-                    new KeywordToken(1, 43, "LET"),
-                    new KeywordToken(1, 49, "GOTO"),
-                    new KeywordToken(1, 57, "RETURN"),
-                    new KeywordToken(1, 66, "CLEAR"),
-                    new KeywordToken(1, 74, "LIST"),
-                    new KeywordToken(1, 77, "RUN"),
-                    new KeywordToken(1, 81, "END")
+                    new KeywordToken(1, 5, Keyword.valueOf("PRINT")),
+                    new KeywordToken(1, 13, Keyword.valueOf("IF")),
+                    new KeywordToken(1, 19, Keyword.valueOf("THEN")),
+                    new KeywordToken(1, 28, Keyword.valueOf("GOTO")),
+                    new KeywordToken(1, 35, Keyword.valueOf("INPUT")),
+                    new KeywordToken(1, 43, Keyword.valueOf("LET")),
+                    new KeywordToken(1, 49, Keyword.valueOf("GOTO")),
+                    new KeywordToken(1, 57, Keyword.valueOf("RETURN")),
+                    new KeywordToken(1, 66, Keyword.valueOf("CLEAR")),
+                    new KeywordToken(1, 74, Keyword.valueOf("LIST")),
+                    new KeywordToken(1, 77, Keyword.valueOf("RUN")),
+                    new KeywordToken(1, 81, Keyword.valueOf("END"))
             );
 
             // WHEN

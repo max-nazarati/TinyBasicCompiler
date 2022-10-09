@@ -1,7 +1,10 @@
 package tbc.lexer;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Tokeniser {
 
@@ -10,7 +13,8 @@ public class Tokeniser {
     }
 
     public static Token<?> tokeniseLine(Line line) {
-        if (Pattern.compile("(^\\d+ .*[^ ]$)|(^\\D+ .*[^ ]$)|(^\\w+$)").matcher(line.contents()).matches()) {
+        var linePattern = "(^\\d+ .*[^ ]$)|(^\\D+ .*[^ ]$)|(^\\w+$)";
+        if (Pattern.compile(linePattern).matcher(line.contents()).matches()) {
             return new LineToken(line.row(), 0, line.contents());
         } else {
             throw new RuntimeException("LINE PARSING FAILED");

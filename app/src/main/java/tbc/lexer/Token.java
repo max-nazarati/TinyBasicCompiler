@@ -28,24 +28,8 @@ public class Token {
         return row;
     }
 
-    public void incrementRow() {
-        row++;
-    }
-
-    public void decrementRow() {
-        row--;
-    }
-
     public int column() {
         return column;
-    }
-
-    public void incrementColumn() {
-        column++;
-    }
-
-    public void decrementColumn() {
-        column--;
     }
 
     @Override

@@ -20,7 +20,7 @@ class TokeniserTest {
         void tokeniseLine(String lineString) {
             // GIVEN
             var line = new Line(2, lineString);
-            var expectedToken = new LineToken(2, 0, lineString);
+            var expectedToken = new Token(2, 0, lineString, TokenType.LINE);
 
             // WHEN
             var result = Tokeniser.tokeniseLine(line);
@@ -55,39 +55,40 @@ class TokeniserTest {
     class KeywordTokenisation {
 
         @Test
-        void tokeniseKeywords() {
+        void tokenisePrint() {
             // GIVEN
-            var line = new LineToken(1, 0, "100 PRINT a IF aa THEN aaa GOTO a INPUT a LET A GOSUB A RETURN a CLEAR LIST RUN END");
+            var line = new Token(1, 0, "PRINT alasdj adf 23420 lkjjsf", TokenType.LINE);
             var expectedTokens = List.of(
-                    new KeywordToken(1, 5, Keyword.valueOf("PRINT")),
-                    new KeywordToken(1, 13, Keyword.valueOf("IF")),
-                    new KeywordToken(1, 19, Keyword.valueOf("THEN")),
-                    new KeywordToken(1, 28, Keyword.valueOf("GOTO")),
-                    new KeywordToken(1, 35, Keyword.valueOf("INPUT")),
-                    new KeywordToken(1, 43, Keyword.valueOf("LET")),
-                    new KeywordToken(1, 49, Keyword.valueOf("GOTO")),
-                    new KeywordToken(1, 57, Keyword.valueOf("RETURN")),
-                    new KeywordToken(1, 66, Keyword.valueOf("CLEAR")),
-                    new KeywordToken(1, 74, Keyword.valueOf("LIST")),
-                    new KeywordToken(1, 77, Keyword.valueOf("RUN")),
-                    new KeywordToken(1, 81, Keyword.valueOf("END"))
+                    new Token(1, 0, "PRINT", TokenType.KEYWORD),
+                    new Token(1, 5, " alasdj adf 23420 lkjjsf", TokenType.BLOB)
             );
 
             // WHEN
-            List<KeywordToken> result = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = Tokeniser.tokeniseKeywords(line);
 
             // THEN
             assertThat(result).isEqualTo(expectedTokens);
         }
 
         @Test
-        void throwsForInvalidKeyword() {
+        void throwsIfKeywordAfterPrint() {
             // GIVEN
-            var line = new LineToken(1, 0, "100 PRI a");
+            var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);
 
             // WHEN THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line)).isInstanceOf(RuntimeException.class).hasMessage(String.format(
-                    "FAILED TO PARSE KEYWORD AT: [%d, %d]", 1, 5));
+            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("KEYWORD PARSING FAILED 1");
+        }
+
+        @Test
+        void throwsIfInvalidKeyword() {
+            // GIVEN
+            var line = new Token(1, 0, "PRI IF a", TokenType.LINE);
+
+            // WHEN THEN
+            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
     }

@@ -2,20 +2,21 @@ package tbc.lexer;
 
 import java.util.Objects;
 
-public abstract class Token<T> {
+public class Token {
+
     private int row;
     private int column;
-    private final T value;
+    private final String value;
     private final TokenType type;
 
-    protected Token(int row, int column, T value, TokenType type) {
+    protected Token(int row, int column, String value, TokenType type) {
         this.row = row;
         this.column = column;
         this.value = value;
         this.type = type;
     }
 
-    public T value() {
+    public String value() {
         return value;
     }
 
@@ -55,7 +56,7 @@ public abstract class Token<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Token<?> token = (Token<?>) o;
+        Token token = (Token) o;
         return row == token.row && column == token.column && value.equals(token.value) && type == token.type;
     }
 

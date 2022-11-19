@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class Token {
 
-    private int row;
-    private int column;
+    private final int row;
+    private final int column;
     private final String value;
     private final TokenType type;
 

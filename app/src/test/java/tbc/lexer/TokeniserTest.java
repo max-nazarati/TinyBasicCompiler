@@ -71,6 +71,35 @@ class TokeniserTest {
         }
 
         @Test
+        void tokeniseIf() {
+            // GIVEN
+            var line = new Token(1, 0, "IF alasdj adf THEN 23420 lkjjsf", TokenType.LINE);
+            var expectedTokens = List.of(
+                    new Token(1, 0, "IF", TokenType.KEYWORD),
+                    new Token(1, 2, " alasdj adf ", TokenType.BLOB),
+                    new Token(1, 14, "THEN", TokenType.KEYWORD),
+                    new Token(1, 18, " 23420 lkjjsf", TokenType.BLOB)
+            );
+
+            // WHEN
+            List<Token> result = Tokeniser.tokeniseKeywords(line);
+
+            // THEN
+            assertThat(result).isEqualTo(expectedTokens);
+        }
+
+        @Test
+        void throwsIfInvalidIfLine() {
+            // GIVEN
+            var line = new Token(1, 0, "IF a THEN THEN", TokenType.LINE);
+
+            // WHEN THEN
+            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("KEYWORD PARSING FAILED 1");
+        }
+
+        @Test
         void throwsIfKeywordAfterPrint() {
             // GIVEN
             var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);

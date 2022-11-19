@@ -1,6 +1,5 @@
 package tbc.lexer;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,7 +21,7 @@ public class Tokeniser {
     public static List<Token> tokeniseKeywords(Token line) {
         Keyword keyword = Keyword.valueOf(line.value().substring(0, line.value().indexOf(' ')));
         return switch (keyword) {
-            case PRINT -> {
+            case PRINT, GOTO, INPUT, LET, GOSUB -> {
                 String restOfLine = line.value().substring(5);
                 // TODO add string skipping logic "PRINT" is a false positive
                 if (someOtherKeyword(restOfLine)) {
@@ -33,32 +32,26 @@ public class Tokeniser {
                         new Token(line.row(), 5, line.value().substring(5), TokenType.BLOB)
                 );
             }
-            case IF -> {
-                int thenIndex = line.value().indexOf("THEN");
-                if (someKeywordOtherThan(line.value().substring(0, thenIndex), Keyword.ELSE)) {
+            case IF, THEN -> {
+                int thenIndex = line.value().lastIndexOf("THEN");
+                if (someOtherKeyword(line.value().substring(3, thenIndex))) {
                     throw new RuntimeException("KEYWORD PARSING FAILED %d".formatted(line.row()));
                 }
                 yield List.of(
                         new Token(line.row(), 0, Keyword.IF.getName(), TokenType.KEYWORD),
-                        new Token(line.row(), 3, line.value().substring(3, thenIndex), TokenType.BLOB),
+                        new Token(line.row(), 2, line.value().substring(2, thenIndex), TokenType.BLOB),
                         new Token(line.row(), thenIndex, Keyword.THEN.getName(), TokenType.KEYWORD),
                         new Token(line.row(), thenIndex + 4, line.value().substring(thenIndex + 4), TokenType.BLOB)
                 );
             }
-            default -> throw new RuntimeException("NOT IMPLEMENTED");
-        }
-
-                ;
+            case RETURN, CLEAR, LIST, RUN, END -> {
+                throw new RuntimeException("NOT IMPLEMENTED");
+            }
+        };
     }
 
     private static boolean someOtherKeyword(String restOfLine) {
-        return Arrays.stream(Keyword.values()).anyMatch(kw -> restOfLine.contains(kw.getName()));
-    }
-
-    private static boolean someKeywordOtherThan(String string, Keyword keyword) {
-        return Arrays.stream(Keyword.values())
-                .filter(kw -> !kw.equals(keyword))
-                .anyMatch(kw -> string.contains(kw.getName()));
+        return Keyword.names().anyMatch(restOfLine::contains);
     }
 
 }

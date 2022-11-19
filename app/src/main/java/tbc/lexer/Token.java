@@ -20,16 +20,22 @@ public class Token {
         return value;
     }
 
-    public TokenType type() {
-        return type;
-    }
-
     public int row() {
         return row;
     }
 
     public int column() {
         return column;
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "row=" + row +
+                ", column=" + column +
+                ", value='" + value + '\'' +
+                ", type=" + type +
+                '}';
     }
 
     @Override

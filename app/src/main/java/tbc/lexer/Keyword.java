@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 
 public enum Keyword {
     IF("IF"),
-    ELSE("ELSE"),
     PRINT("PRINT"),
     THEN("THEN"),
     GOTO("GOTO"),

@@ -3,9 +3,11 @@ package tbc.lexer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,11 +18,11 @@ class TokeniserTest {
     class LineTokenisation {
 
         @ParameterizedTest
-        @ValueSource(strings = {"100 a", "200 a b", "300 alksdj lkajsd; _ ljfd", "some words without contents number"})
-        void tokeniseLine(String lineString) {
+        @MethodSource("argsProvider")
+        void tokeniseLine(int customRow, String lineString) {
             // GIVEN
             var line = new Line(2, lineString);
-            var expectedToken = new Token(2, 0, lineString, TokenType.LINE);
+            var expectedToken = new Token(2, customRow, 0, lineString, TokenType.LINE);
 
             // WHEN
             var result = Tokeniser.tokeniseLine(line);
@@ -47,6 +49,16 @@ class TokeniserTest {
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("LINE PARSING FAILED");
+        }
+
+        private static Stream<Arguments> argsProvider() {
+            return Stream.of(
+                    Arguments.of(100, "100 a"),
+                    Arguments.of(200, "200 a b"),
+                    Arguments.of(300, "300 alksdj lkajsd; _ ljfd"),
+                    Arguments.of(2, "some words without contents number")
+            );
+
         }
 
     }

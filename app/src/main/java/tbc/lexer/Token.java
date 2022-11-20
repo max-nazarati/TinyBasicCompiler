@@ -5,12 +5,22 @@ import java.util.Objects;
 public class Token {
 
     private final int row;
+    private final int customRow;
     private final int column;
     private final String value;
     private final TokenType type;
 
     protected Token(int row, int column, String value, TokenType type) {
         this.row = row;
+        this.customRow = row;
+        this.column = column;
+        this.value = value;
+        this.type = type;
+    }
+
+    protected Token(int row, int customRow, int column, String value, TokenType type) {
+        this.row = row;
+        this.customRow = customRow;
         this.column = column;
         this.value = value;
         this.type = type;
@@ -29,16 +39,6 @@ public class Token {
     }
 
     @Override
-    public String toString() {
-        return "Token{" +
-                "row=" + row +
-                ", column=" + column +
-                ", value='" + value + '\'' +
-                ", type=" + type +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -47,12 +47,23 @@ public class Token {
             return false;
         }
         Token token = (Token) o;
-        return row == token.row && column == token.column && value.equals(token.value) && type == token.type;
+        return row == token.row && customRow == token.customRow && column == token.column && value.equals(token.value) && type == token.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row, column, value, type);
+        return Objects.hash(row, customRow, column, value, type);
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "row=" + row +
+                ", dynamicRow=" + customRow +
+                ", column=" + column +
+                ", value='" + value + '\'' +
+                ", type=" + type +
+                '}';
     }
 
 }

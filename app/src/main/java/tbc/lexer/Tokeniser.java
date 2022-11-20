@@ -34,7 +34,10 @@ public class Tokeniser {
     }
 
     public static List<Token> tokeniseKeywords(Token line) {
-        Keyword keyword = Keyword.valueOf(line.value().substring(0, line.value().indexOf(' ')));
+        int firstWhitespace = line.value().indexOf(' ');
+        firstWhitespace = firstWhitespace == -1 ? line.value().length() : firstWhitespace;
+
+        Keyword keyword = Keyword.valueOf(line.value().substring(0, firstWhitespace));
         return switch (keyword) {
             case PRINT, GOTO, INPUT, LET, GOSUB -> {
                 String restOfLine = line.value().substring(keyword.getName().length());
@@ -60,7 +63,7 @@ public class Tokeniser {
                 );
             }
             case RETURN, CLEAR, LIST, RUN, END -> {
-                if (!keyword.equals(Keyword.valueOf(line.value()))) {
+                if (!keyword.getName().equals(line.value())) {
                     throw new RuntimeException("KEYWORD PARSING FAILED %d".formatted(line.row()));
                 }
                 yield List.of(new Token(line.row(), 0, keyword.getName(), TokenType.KEYWORD));

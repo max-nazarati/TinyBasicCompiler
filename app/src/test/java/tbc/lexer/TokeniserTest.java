@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -83,6 +84,17 @@ class TokeniserTest {
         }
 
         @Test
+        void throwsIfKeywordAfterPrint() {
+            // GIVEN
+            var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);
+
+            // WHEN THEN
+            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("KEYWORD PARSING FAILED 1");
+        }
+
+        @Test
         void tokeniseIf() {
             // GIVEN
             var line = new Token(1, 0, "IF alasdj adf THEN 23420 lkjjsf", TokenType.LINE);
@@ -111,14 +123,26 @@ class TokeniserTest {
                     .hasMessage("KEYWORD PARSING FAILED 1");
         }
 
-        @Test
-        void throwsIfKeywordAfterPrint() {
+        @ParameterizedTest
+        @ValueSource(strings = {"RETURN", "CLEAR", "LIST", "RUN", "END"})
+        void parameterLessKeywords(String keyword) {
             // GIVEN
-            var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);
+            var line = new Token(1, 0, keyword, TokenType.LINE);
+
+            // WHEN
+            List<Token> result = Tokeniser.tokeniseKeywords(line);
+
+            // THEN
+            assertThat(result).hasSize(1).containsExactly(new Token(1, 0, keyword, TokenType.KEYWORD));
+        }
+
+        @Test
+        void parameterlessKeywordThrowsWhenParameters() {
+            // GIVEN
+            var line = new Token(1, 0, "RETURN 1", TokenType.LINE);
 
             // WHEN THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
-                    .isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line)).isInstanceOf(RuntimeException.class)
                     .hasMessage("KEYWORD PARSING FAILED 1");
         }
 

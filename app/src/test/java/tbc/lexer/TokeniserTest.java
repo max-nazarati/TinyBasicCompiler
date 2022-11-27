@@ -39,7 +39,7 @@ class TokeniserTest {
 
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
-                    .hasMessage("LINE PARSING FAILED");
+                    .hasMessage("line <1> is could not be parsed");
         }
 
         @Test
@@ -49,7 +49,7 @@ class TokeniserTest {
 
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
-                    .hasMessageContaining("LINE PARSING FAILED");
+                    .hasMessageContaining("line <1> is could not be parsed");
         }
 
         private static Stream<Arguments> argsProvider() {
@@ -91,7 +91,7 @@ class TokeniserTest {
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
-                    .hasMessage("KEYWORD PARSING FAILED 1");
+                    .hasMessage("unexpected keyword found at <1:6>");
         }
 
         @Test
@@ -115,12 +115,13 @@ class TokeniserTest {
         @Test
         void throwsIfInvalidIfLine() {
             // GIVEN
+            // TODO wrong column calculation in error message
             var line = new Token(1, 0, "IF a THEN THEN", TokenType.LINE);
 
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
-                    .hasMessage("KEYWORD PARSING FAILED 1");
+                    .hasMessage("unexpected keyword found at <1:3>");
         }
 
         @ParameterizedTest
@@ -143,7 +144,7 @@ class TokeniserTest {
 
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line)).isInstanceOf(RuntimeException.class)
-                    .hasMessage("KEYWORD PARSING FAILED 1");
+                    .hasMessage("text was found after a parameterless keyword at <1:0>");
         }
 
         @Test

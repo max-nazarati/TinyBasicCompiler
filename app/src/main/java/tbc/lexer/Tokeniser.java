@@ -1,5 +1,7 @@
 package tbc.lexer;
 
+import tbc.lexer.exception.ParsingException;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +30,7 @@ public class Tokeniser {
                 return new Token(line.row(), 0, line.contents(), TokenType.LINE);
 
             } else {
-                throw new RuntimeException("LINE PARSING FAILED");
+                throw new RuntimeException(ParsingException.LINE_NOT_PARSABLE.errorMessage().formatted(line.row()));
             }
         }
     }
@@ -43,7 +45,8 @@ public class Tokeniser {
                 String restOfLine = line.value().substring(keyword.getName().length());
                 // TODO add string skipping logic "PRINT" is a false positive
                 if (someOtherKeyword(restOfLine)) {
-                    throw new RuntimeException("KEYWORD PARSING FAILED %d".formatted(line.row()));
+                    throw new RuntimeException(ParsingException.UNEXPECTED_KEYWORD_FOUND.errorMessage()
+                            .formatted(line.row(), keyword.getName().length() + 1));
                 }
                 yield List.of(
                         new Token(line.row(), 0, line.value().substring(0, 5), TokenType.KEYWORD),
@@ -53,7 +56,8 @@ public class Tokeniser {
             case IF, THEN -> {
                 int thenIndex = line.value().lastIndexOf("THEN");
                 if (someOtherKeyword(line.value().substring(3, thenIndex))) {
-                    throw new RuntimeException("KEYWORD PARSING FAILED %d".formatted(line.row()));
+                    throw new RuntimeException(ParsingException.UNEXPECTED_KEYWORD_FOUND.errorMessage()
+                            .formatted(line.row(), keyword.getName().length() + 1));
                 }
                 yield List.of(
                         new Token(line.row(), 0, Keyword.IF.getName(), TokenType.KEYWORD),
@@ -64,7 +68,7 @@ public class Tokeniser {
             }
             case RETURN, CLEAR, LIST, RUN, END -> {
                 if (!keyword.getName().equals(line.value())) {
-                    throw new RuntimeException("KEYWORD PARSING FAILED %d".formatted(line.row()));
+                    throw new RuntimeException(ParsingException.TEXT_AFTER_PARAMETERLESS_KEYWORD.errorMessage().formatted(line.row(), 0));
                 }
                 yield List.of(new Token(line.row(), 0, keyword.getName(), TokenType.KEYWORD));
             }

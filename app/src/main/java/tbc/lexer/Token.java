@@ -57,12 +57,8 @@ public class Token {
 
     @Override
     public String toString() {
-        return "<" + type +
-                "|row=" + row +
-                "|dr=" + customRow +
-                "|c=" + column +
-                "|v='" + value + '\'' +
-                '>';
+        var shape = "<%s|r=%d|dr=%d|c=%d|v='%s'>";
+        return shape.formatted(type, row, customRow, column, value);
     }
 
 }

@@ -57,13 +57,12 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token{" +
-                "row=" + row +
-                ", dynamicRow=" + customRow +
-                ", column=" + column +
-                ", value='" + value + '\'' +
-                ", type=" + type +
-                '}';
+        return "<" + type +
+                "|row=" + row +
+                "|dr=" + customRow +
+                "|c=" + column +
+                "|v='" + value + '\'' +
+                '>';
     }
 
 }

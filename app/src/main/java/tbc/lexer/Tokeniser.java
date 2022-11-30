@@ -40,24 +40,25 @@ public class Tokeniser {
         firstWhitespace = firstWhitespace == -1 ? line.value().length() : firstWhitespace;
 
         Keyword keyword = Keyword.valueOf(line.value().substring(0, firstWhitespace));
+        final int keywordEndIndex = keyword.getName().length();
         return switch (keyword) {
             case PRINT, GOTO, INPUT, LET, GOSUB -> {
                 String restOfLine = line.value().substring(keyword.getName().length());
                 // TODO add string skipping logic "PRINT" is a false positive
                 if (someOtherKeyword(restOfLine)) {
                     throw new RuntimeException(ParsingException.UNEXPECTED_KEYWORD_FOUND.errorMessage()
-                            .formatted(line.row(), keyword.getName().length() + 1));
+                            .formatted(line.row(), keywordEndIndex));
                 }
                 yield List.of(
-                        new Token(line.row(), 0, line.value().substring(0, 5), TokenType.KEYWORD),
-                        new Token(line.row(), 5, line.value().substring(5), TokenType.BLOB)
+                        new Token(line.row(), 0, line.value().substring(0, keywordEndIndex), TokenType.KEYWORD),
+                        new Token(line.row(), keywordEndIndex, line.value().substring(keywordEndIndex), TokenType.BLOB)
                 );
             }
             case IF, THEN -> {
                 int thenIndex = line.value().lastIndexOf("THEN");
                 if (someOtherKeyword(line.value().substring(3, thenIndex))) {
                     throw new RuntimeException(ParsingException.UNEXPECTED_KEYWORD_FOUND.errorMessage()
-                            .formatted(line.row(), keyword.getName().length() + 1));
+                            .formatted(line.row(), thenIndex));
                 }
                 yield List.of(
                         new Token(line.row(), 0, Keyword.IF.getName(), TokenType.KEYWORD),

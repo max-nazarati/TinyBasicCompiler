@@ -91,7 +91,7 @@ class TokeniserTest {
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
-                    .hasMessage("unexpected keyword found at <1:6>");
+                    .hasMessage("unexpected keyword found at <1:5>");
         }
 
         @Test
@@ -121,7 +121,7 @@ class TokeniserTest {
             // WHEN THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
-                    .hasMessage("unexpected keyword found at <1:3>");
+                    .hasMessage("unexpected keyword found at <1:10>");
         }
 
         @ParameterizedTest

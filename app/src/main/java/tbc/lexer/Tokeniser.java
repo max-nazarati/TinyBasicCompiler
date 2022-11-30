@@ -2,6 +2,7 @@ package tbc.lexer;
 
 import tbc.lexer.exception.ParsingException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,6 +75,27 @@ public class Tokeniser {
                 yield List.of(new Token(line.row(), 0, keyword.getName(), TokenType.KEYWORD));
             }
         };
+    }
+
+    public static List<Token> resolveBlobs(List<Token> tokensWithBlobs) {
+        var tokensWithoutBlobs = new ArrayList<Token>();
+        TokenType previousTokenType = tokensWithBlobs.get(0).tokenType();
+
+        for (Token t : tokensWithBlobs) {
+            if (t.tokenType().equals(TokenType.BLOB)) {
+                List<Token> distilledBlob = resolveBlob(previousTokenType, t);
+                tokensWithoutBlobs.addAll(distilledBlob);
+            } else {
+                tokensWithoutBlobs.add(t);
+                previousTokenType = t.tokenType();
+            }
+        }
+
+        return tokensWithoutBlobs;
+    }
+
+    private static List<Token> resolveBlob(TokenType previousTokenType, Token t) {
+
     }
 
     private static boolean someOtherKeyword(String restOfLine) {

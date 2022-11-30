@@ -3,6 +3,7 @@ package tbc.lexer;
 import java.util.Objects;
 
 public class Token {
+    // TODO: turn into a record?
 
     private final int row;
     private final int customRow;
@@ -36,6 +37,10 @@ public class Token {
 
     public int column() {
         return column;
+    }
+
+    public TokenType tokenType() {
+        return tokenType();
     }
 
     @Override

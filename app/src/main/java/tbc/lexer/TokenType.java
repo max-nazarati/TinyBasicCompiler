@@ -6,5 +6,9 @@ public enum TokenType {
     EXPRESSION,
     EXPR_LST,
     VAR_LST,
-    BLOB
+    BLOB,
+    RELOP,
+    STATEMENT,
+    ASSIGNMENT,
+    VAR
 }

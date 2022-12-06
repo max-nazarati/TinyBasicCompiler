@@ -4,6 +4,7 @@ import tbc.lexer.exception.ParsingException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,23 +80,59 @@ public class Tokeniser {
 
     public static List<Token> resolveBlobs(List<Token> tokensWithBlobs) {
         var tokensWithoutBlobs = new ArrayList<Token>();
-        TokenType previousTokenType = tokensWithBlobs.get(0).tokenType();
+        Token previousToken = tokensWithBlobs.get(0);
 
         for (Token t : tokensWithBlobs) {
             if (t.tokenType().equals(TokenType.BLOB)) {
-                List<Token> distilledBlob = resolveBlob(previousTokenType, t);
+                List<Token> distilledBlob = resolveBlob(previousToken, t);
                 tokensWithoutBlobs.addAll(distilledBlob);
             } else {
                 tokensWithoutBlobs.add(t);
-                previousTokenType = t.tokenType();
+                previousToken = t;
             }
         }
 
         return tokensWithoutBlobs;
     }
 
-    private static List<Token> resolveBlob(TokenType previousTokenType, Token t) {
+    private static List<Token> resolveBlob(Token previousToken, Token t) {
+        if (previousToken.value().equals("IF")) {
+            int relopIndex = indexOfRelop(t.value()).orElseThrow(() -> new RuntimeException("howfhwaw"));
+            var relopString = t.value().substring(relopIndex, relopIndex + 1);
+            var parts = List.of(t.value().substring(0, relopIndex).trim(), t.value().substring(relopIndex + 1).trim());
+            var relop = new Token(t.row(), t.column() + relopIndex, relopString, TokenType.RELOP);
+            var left = new Token(t.row(), t.column() + 1, parts.get(0), TokenType.EXPRESSION);
+            var right = new Token(t.row(), relopIndex + 2, parts.get(1), TokenType.EXPRESSION);
 
+            return List.of(left, relop, right);
+        } else if (previousToken.value().equals("THEN")) {
+            return List.of(new Token(t.row(), t.column() + 1, t.value().trim(), TokenType.STATEMENT));
+        } else if (previousToken.value().equals("GOTO") || previousToken.value().equals("GOSUB")) {
+            return List.of(new Token(t.row(), t.column() + 1, t.value().trim(), TokenType.EXPRESSION));
+        } else if (previousToken.value().equals("INPUT")) {
+            return List.of(new Token(t.row(), t.column() + 1, t.value().trim(), TokenType.VAR_LST));
+        } else if (previousToken.value().equals("PRINT")) {
+            return List.of(new Token(t.row(), t.column() + 1, t.value().trim(), TokenType.EXPR_LST));
+        } else if (previousToken.value().equals("LET")) {
+            int assignmentIndex = t.value().indexOf("=");
+            if (assignmentIndex == -1) {
+                throw new RuntimeException("lasdaadslj");
+            }
+            var left = new Token(t.row(), t.column() + 1, t.value().substring(0, assignmentIndex).trim(), TokenType.VAR);
+            var right = new Token(t.row(), assignmentIndex + 2, t.value().substring(assignmentIndex + 1).trim(), TokenType.EXPRESSION);
+            var assignment = new Token(t.row(), assignmentIndex, "=", TokenType.ASSIGNMENT);
+            return List.of(left, assignment, right);
+        } else {
+            throw new RuntimeException("sth went wrong here");
+        }
+
+    }
+
+    private static Optional<Integer> indexOfRelop(String s) {
+        return Symbol.getRelops().stream()
+                .filter(s::contains)
+                .map(s::indexOf)
+                .findFirst();
     }
 
     private static boolean someOtherKeyword(String restOfLine) {

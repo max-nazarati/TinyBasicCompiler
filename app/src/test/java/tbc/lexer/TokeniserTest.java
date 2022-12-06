@@ -159,4 +159,31 @@ class TokeniserTest {
 
     }
 
+    @Nested
+    class BlobResolution {
+
+        @Test
+        void ifElseBlobs() {
+            // GIVEN
+            var line = new Token(1, 0, "IF alasdj < adf THEN 23420 lkjjsf", TokenType.LINE);
+            var expectedTokens = List.of(
+                    new Token(1, 0, "IF", TokenType.KEYWORD),
+                    new Token(1, 3, "alasdj", TokenType.EXPRESSION),
+                    new Token(1, 10, "<", TokenType.RELOP),
+                    new Token(1, 12, "adf", TokenType.EXPRESSION),
+                    new Token(1, 15, "THEN", TokenType.KEYWORD),
+                    new Token(1, 19, "23420 lkjjsf", TokenType.STATEMENT)
+            );
+
+            // WHEN
+            List<Token> result = Tokeniser.tokeniseKeywords(line);
+            result = Tokeniser.resolveBlobs(result);
+
+            // THEN
+            assertThat(result).hasSize(6);
+            assertThat(result).isEqualTo(expectedTokens);
+        }
+
+    }
+
 }

@@ -40,7 +40,7 @@ public class Token {
     }
 
     public TokenType tokenType() {
-        return tokenType();
+        return type;
     }
 
     @Override

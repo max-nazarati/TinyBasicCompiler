@@ -171,17 +171,34 @@ class TokeniserTest {
                     new Token(1, 3, "alasdj", TokenType.EXPRESSION),
                     new Token(1, 10, "<", TokenType.RELOP),
                     new Token(1, 12, "adf", TokenType.EXPRESSION),
-                    new Token(1, 15, "THEN", TokenType.KEYWORD),
-                    new Token(1, 19, "23420 lkjjsf", TokenType.STATEMENT)
+                    new Token(1, 16, "THEN", TokenType.KEYWORD),
+                    new Token(1, 21, "23420 lkjjsf", TokenType.STATEMENT)
             );
 
             // WHEN
-            List<Token> result = Tokeniser.tokeniseKeywords(line);
-            result = Tokeniser.resolveBlobs(result);
+            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
 
             // THEN
-            assertThat(result).hasSize(6);
             assertThat(result).isEqualTo(expectedTokens);
+        }
+
+        @Test
+        void gotoBlob() {
+            // GIVEN
+            var line = new Token(1, 0, "GOTO some commands", TokenType.LINE);
+            var expectedTokens = List.of(
+                    new Token(1, 0, "GOTO", TokenType.KEYWORD),
+                    new Token(1, 5, "some commands", TokenType.EXPRESSION)
+            );
+
+            // WHEN
+            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+
+            // THEN
+            assertThat(result).isEqualTo(expectedTokens);
+
         }
 
     }

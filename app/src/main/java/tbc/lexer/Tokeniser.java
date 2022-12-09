@@ -102,7 +102,7 @@ public class Tokeniser {
             var parts = List.of(t.value().substring(0, relopIndex).trim(), t.value().substring(relopIndex + 1).trim());
             var relop = new Token(t.row(), t.column() + relopIndex, relopString, TokenType.RELOP);
             var left = new Token(t.row(), t.column() + 1, parts.get(0), TokenType.EXPRESSION);
-            var right = new Token(t.row(), relopIndex + 2, parts.get(1), TokenType.EXPRESSION);
+            var right = new Token(t.row(), t.column() + relopIndex + 2, parts.get(1), TokenType.EXPRESSION);
 
             return List.of(left, relop, right);
         } else if (previousToken.value().equals("THEN")) {

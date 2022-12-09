@@ -168,8 +168,8 @@ class TokeniserTest {
             var line = new Token(1, 0, "IF alasdj < adf THEN 23420 lkjjsf", TokenType.LINE);
             var expectedTokens = List.of(
                     new Token(1, 0, "IF", TokenType.KEYWORD),
-                    new Token(1, 3, "alasdj", TokenType.EXPRESSION),
                     new Token(1, 10, "<", TokenType.RELOP),
+                    new Token(1, 3, "alasdj", TokenType.EXPRESSION),
                     new Token(1, 12, "adf", TokenType.EXPRESSION),
                     new Token(1, 16, "THEN", TokenType.KEYWORD),
                     new Token(1, 21, "23420 lkjjsf", TokenType.STATEMENT)
@@ -240,8 +240,8 @@ class TokeniserTest {
             var line = new Token(1, 0, "LET a = 10", TokenType.LINE);
             var expectedTokens = List.of(
                     new Token(1, 0, "LET", TokenType.KEYWORD),
-                    new Token(1, 4, "a", TokenType.VAR),
                     new Token(1, 6, "=", TokenType.ASSIGNMENT),
+                    new Token(1, 4, "a", TokenType.VAR),
                     new Token(1, 8, "10", TokenType.EXPRESSION)
             );
 

@@ -104,7 +104,7 @@ public class Tokeniser {
             var left = new Token(t.row(), t.column() + 1, parts.get(0), TokenType.EXPRESSION);
             var right = new Token(t.row(), t.column() + relopIndex + 2, parts.get(1), TokenType.EXPRESSION);
 
-            return List.of(left, relop, right);
+            return List.of(relop, left, right);
         } else if (previousToken.value().equals("THEN")) {
             return List.of(new Token(t.row(), t.column() + 1, t.value().trim(), TokenType.STATEMENT));
         } else if (previousToken.value().equals("GOTO") || previousToken.value().equals("GOSUB")) {
@@ -126,7 +126,7 @@ public class Tokeniser {
                     TokenType.EXPRESSION
             );
             var assignment = new Token(t.row(), t.column() + assignmentIndex, "=", TokenType.ASSIGNMENT);
-            return List.of(left, assignment, right);
+            return List.of(assignment, left, right);
         } else {
             throw new RuntimeException("sth went wrong while parsing blobs");
         }

@@ -21,33 +21,33 @@ class TokeniserTest {
         @ParameterizedTest
         @MethodSource("argsProvider")
         void tokeniseLine(int customRow, String lineString) {
-            // GIVEN
+            // given
             var line = new Line(2, lineString);
             var expectedToken = new Token(2, customRow, 0, lineString, TokenType.LINE);
 
-            // WHEN
+            // when
             var result = Tokeniser.tokeniseLine(line);
 
-            // THEN
+            // then
             assertThat(result).isEqualTo(expectedToken);
         }
 
         @Test
         void throwWhenEndsWithWhitespace() {
-            // GIVEN
+            // given
             Line line = new Line(1, "100 a ");
 
-            // WHEN THEN
+            // when THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
                     .hasMessage("line <1> is could not be parsed");
         }
 
         @Test
         void throwWhenInvalidLineNumber() {
-            // GIVEN
+            // given
             var line = new Line(1, "100, a");
 
-            // WHEN THEN
+            // when THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("line <1> is could not be parsed");
         }
@@ -69,26 +69,26 @@ class TokeniserTest {
 
         @Test
         void tokenisePrint() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "PRINT alasdj adf 23420 lkjjsf", TokenType.LINE);
             var expectedTokens = List.of(
                     new Token(1, 0, "PRINT", TokenType.KEYWORD),
                     new Token(1, 5, " alasdj adf 23420 lkjjsf", TokenType.BLOB)
             );
 
-            // WHEN
+            // when
             List<Token> result = Tokeniser.tokeniseKeywords(line);
 
-            // THEN
+            // then
             assertThat(result).isEqualTo(expectedTokens);
         }
 
         @Test
         void throwsIfKeywordAfterPrint() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);
 
-            // WHEN THEN
+            // when THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("unexpected keyword found at <1:5>");
@@ -96,7 +96,7 @@ class TokeniserTest {
 
         @Test
         void tokeniseIf() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "IF alasdj adf THEN 23420 lkjjsf", TokenType.LINE);
             var expectedTokens = List.of(
                     new Token(1, 0, "IF", TokenType.KEYWORD),
@@ -105,20 +105,20 @@ class TokeniserTest {
                     new Token(1, 18, " 23420 lkjjsf", TokenType.BLOB)
             );
 
-            // WHEN
+            // when
             List<Token> result = Tokeniser.tokeniseKeywords(line);
 
-            // THEN
+            // then
             assertThat(result).isEqualTo(expectedTokens);
         }
 
         @Test
         void throwsIfInvalidIfLine() {
-            // GIVEN
+            // given
             // TODO wrong column calculation in error message
             var line = new Token(1, 0, "IF a THEN THEN", TokenType.LINE);
 
-            // WHEN THEN
+            // when THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("unexpected keyword found at <1:10>");
@@ -127,32 +127,32 @@ class TokeniserTest {
         @ParameterizedTest
         @ValueSource(strings = {"RETURN", "CLEAR", "LIST", "RUN", "END"})
         void parameterLessKeywords(String keyword) {
-            // GIVEN
+            // given
             var line = new Token(1, 0, keyword, TokenType.LINE);
 
-            // WHEN
+            // when
             List<Token> result = Tokeniser.tokeniseKeywords(line);
 
-            // THEN
+            // then
             assertThat(result).hasSize(1).containsExactly(new Token(1, 0, keyword, TokenType.KEYWORD));
         }
 
         @Test
         void parameterlessKeywordThrowsWhenParameters() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "RETURN 1", TokenType.LINE);
 
-            // WHEN THEN
+            // when THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line)).isInstanceOf(RuntimeException.class)
                     .hasMessage("text was found after a parameterless keyword at <1:0>");
         }
 
         @Test
         void throwsIfInvalidKeyword() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "PRI IF a", TokenType.LINE);
 
-            // WHEN THEN
+            // when THEN
             assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -164,7 +164,7 @@ class TokeniserTest {
 
         @Test
         void ifElseBlobs() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "IF alasdj < adf THEN 23420 lkjjsf", TokenType.LINE);
             var expectedTokens = List.of(
                     new Token(1, 0, "IF", TokenType.KEYWORD),
@@ -175,28 +175,28 @@ class TokeniserTest {
                     new Token(1, 21, "23420 lkjjsf", TokenType.STATEMENT)
             );
 
-            // WHEN
+            // when
             List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
             List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
 
-            // THEN
+            // then
             assertThat(result).isEqualTo(expectedTokens);
         }
 
         @Test
         void gotoBlob() {
-            // GIVEN
+            // given
             var line = new Token(1, 0, "GOTO some commands", TokenType.LINE);
             var expectedTokens = List.of(
                     new Token(1, 0, "GOTO", TokenType.KEYWORD),
                     new Token(1, 5, "some commands", TokenType.EXPRESSION)
             );
 
-            // WHEN
+            // when
             List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
             List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
 
-            // THEN
+            // then
             assertThat(result).isEqualTo(expectedTokens);
 
         }

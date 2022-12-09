@@ -97,7 +97,7 @@ public class Tokeniser {
 
     private static List<Token> resolveBlob(Token previousToken, Token t) {
         if (previousToken.value().equals("IF")) {
-            int relopIndex = indexOfRelop(t.value()).orElseThrow(() -> new RuntimeException("howfhwaw"));
+            int relopIndex = indexOfRelop(t.value()).orElseThrow(() -> new RuntimeException("could not parse IF body"));
             var relopString = t.value().substring(relopIndex, relopIndex + 1);
             var parts = List.of(t.value().substring(0, relopIndex).trim(), t.value().substring(relopIndex + 1).trim());
             var relop = new Token(t.row(), t.column() + relopIndex, relopString, TokenType.RELOP);
@@ -114,23 +114,28 @@ public class Tokeniser {
         } else if (previousToken.value().equals("PRINT")) {
             return List.of(new Token(t.row(), t.column() + 1, t.value().trim(), TokenType.EXPR_LST));
         } else if (previousToken.value().equals("LET")) {
-            int assignmentIndex = t.value().indexOf("=");
-            if (assignmentIndex == -1) {
-                throw new RuntimeException("lasdaadslj");
+            if (!t.value().contains(" = ")) {
+                throw new RuntimeException("this does not look like a correct assignment");
             }
+            int assignmentIndex = t.value().indexOf("=");
             var left = new Token(t.row(), t.column() + 1, t.value().substring(0, assignmentIndex).trim(), TokenType.VAR);
-            var right = new Token(t.row(), assignmentIndex + 2, t.value().substring(assignmentIndex + 1).trim(), TokenType.EXPRESSION);
-            var assignment = new Token(t.row(), assignmentIndex, "=", TokenType.ASSIGNMENT);
+            var right = new Token(
+                    t.row(),
+                    t.column() + assignmentIndex + 2,
+                    t.value().substring(assignmentIndex + 1).trim(),
+                    TokenType.EXPRESSION
+            );
+            var assignment = new Token(t.row(), t.column() + assignmentIndex, "=", TokenType.ASSIGNMENT);
             return List.of(left, assignment, right);
         } else {
-            throw new RuntimeException("sth went wrong here");
+            throw new RuntimeException("sth went wrong while parsing blobs");
         }
 
     }
 
     private static Optional<Integer> indexOfRelop(String s) {
         return Symbol.getRelops().stream()
-                .filter(s::contains)
+                .filter(x -> s.contains(" " + x + " "))
                 .map(s::indexOf)
                 .findFirst();
     }

@@ -198,7 +198,95 @@ class TokeniserTest {
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
+        }
 
+        @Test
+        void inputBlob() {
+            // given
+            var line = new Token(1, 0, "INPUT some commands", TokenType.LINE);
+            var expectedTokens = List.of(
+                    new Token(1, 0, "INPUT", TokenType.KEYWORD),
+                    new Token(1, 6, "some commands", TokenType.VAR_LST)
+            );
+
+            // when
+            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+
+            // then
+            assertThat(result).isEqualTo(expectedTokens);
+        }
+
+        @Test
+        void printBlob() {
+            // given
+            var line = new Token(1, 0, "PRINT some commands", TokenType.LINE);
+            var expectedTokens = List.of(
+                    new Token(1, 0, "PRINT", TokenType.KEYWORD),
+                    new Token(1, 6, "some commands", TokenType.EXPR_LST)
+            );
+
+            // when
+            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+
+            // then
+            assertThat(result).isEqualTo(expectedTokens);
+        }
+
+        @Test
+        void letBlob() {
+            // given
+            var line = new Token(1, 0, "LET a = 10", TokenType.LINE);
+            var expectedTokens = List.of(
+                    new Token(1, 0, "LET", TokenType.KEYWORD),
+                    new Token(1, 4, "a", TokenType.VAR),
+                    new Token(1, 6, "=", TokenType.ASSIGNMENT),
+                    new Token(1, 8, "10", TokenType.EXPRESSION)
+            );
+
+            // when
+            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+
+            // then
+            assertThat(result).isEqualTo(expectedTokens);
+        }
+
+        @Test
+        void throwsWhenInvalidKeyword() {
+            var tokens = List.of(
+                    new Token(1, 0, "LETT", TokenType.KEYWORD),
+                    new Token(1, 0, " a = b", TokenType.BLOB)
+            );
+
+            // when then
+            assertThatThrownBy(() -> Tokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
+                    .hasMessage("sth went wrong while parsing blobs");
+        }
+
+        @Test
+        void throwsWhenInvalidIfBody() {
+            var tokens = List.of(
+                    new Token(1, 0, "IF", TokenType.KEYWORD),
+                    new Token(1, 0, " a <= b", TokenType.BLOB)
+            );
+
+            // when then
+            assertThatThrownBy(() -> Tokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
+                    .hasMessage("could not parse IF body");
+        }
+
+        @Test
+        void throwsWhenInvalidLetAssignment() {
+            var tokens = List.of(
+                    new Token(1, 0, "LET", TokenType.KEYWORD),
+                    new Token(1, 0, " a == b", TokenType.BLOB)
+            );
+
+            // when then
+            assertThatThrownBy(() -> Tokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
+                    .hasMessage("this does not look like a correct assignment");
         }
 
     }

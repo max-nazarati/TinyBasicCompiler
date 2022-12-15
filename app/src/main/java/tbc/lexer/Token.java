@@ -32,7 +32,7 @@ public class Token {
     }
 
     public int row() {
-        return row;
+        return customRow;
     }
 
     public int column() {

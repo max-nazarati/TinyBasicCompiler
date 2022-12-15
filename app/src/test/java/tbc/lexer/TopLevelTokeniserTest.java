@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class TokeniserTest {
+class TopLevelTokeniserTest {
 
     @Nested
     class LineTokenisation {
@@ -26,7 +26,7 @@ class TokeniserTest {
             var expectedToken = new Token(2, customRow, 0, lineString, TokenType.LINE);
 
             // when
-            var result = Tokeniser.tokeniseLine(line);
+            var result = TopLevelTokeniser.tokeniseLine(line);
 
             // then
             assertThat(result).isEqualTo(expectedToken);
@@ -38,7 +38,7 @@ class TokeniserTest {
             Line line = new Line(1, "100 a ");
 
             // when THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> TopLevelTokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
                     .hasMessage("line <1> is could not be parsed");
         }
 
@@ -48,7 +48,7 @@ class TokeniserTest {
             var line = new Line(1, "100, a");
 
             // when THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> TopLevelTokeniser.tokeniseLine(line)).isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("line <1> is could not be parsed");
         }
 
@@ -77,7 +77,7 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> result = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.tokeniseKeywords(line);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -89,7 +89,7 @@ class TokeniserTest {
             var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);
 
             // when THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+            assertThatThrownBy(() -> TopLevelTokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("unexpected keyword found at <1:5>");
         }
@@ -106,7 +106,7 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> result = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.tokeniseKeywords(line);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -119,7 +119,7 @@ class TokeniserTest {
             var line = new Token(1, 0, "IF a THEN THEN", TokenType.LINE);
 
             // when THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+            assertThatThrownBy(() -> TopLevelTokeniser.tokeniseKeywords(line))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("unexpected keyword found at <1:10>");
         }
@@ -131,7 +131,7 @@ class TokeniserTest {
             var line = new Token(1, 0, keyword, TokenType.LINE);
 
             // when
-            List<Token> result = Tokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.tokeniseKeywords(line);
 
             // then
             assertThat(result).hasSize(1).containsExactly(new Token(1, 0, keyword, TokenType.KEYWORD));
@@ -143,7 +143,7 @@ class TokeniserTest {
             var line = new Token(1, 0, "RETURN 1", TokenType.LINE);
 
             // when THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line)).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> TopLevelTokeniser.tokeniseKeywords(line)).isInstanceOf(RuntimeException.class)
                     .hasMessage("text was found after a parameterless keyword at <1:0>");
         }
 
@@ -153,7 +153,7 @@ class TokeniserTest {
             var line = new Token(1, 0, "PRI IF a", TokenType.LINE);
 
             // when THEN
-            assertThatThrownBy(() -> Tokeniser.tokeniseKeywords(line))
+            assertThatThrownBy(() -> TopLevelTokeniser.tokeniseKeywords(line))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -176,8 +176,8 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
-            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+            List<Token> tokensWithBlobs = TopLevelTokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.resolveBlobs(tokensWithBlobs);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -193,8 +193,8 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
-            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+            List<Token> tokensWithBlobs = TopLevelTokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.resolveBlobs(tokensWithBlobs);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -210,8 +210,8 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
-            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+            List<Token> tokensWithBlobs = TopLevelTokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.resolveBlobs(tokensWithBlobs);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -227,8 +227,8 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
-            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+            List<Token> tokensWithBlobs = TopLevelTokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.resolveBlobs(tokensWithBlobs);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -246,8 +246,8 @@ class TokeniserTest {
             );
 
             // when
-            List<Token> tokensWithBlobs = Tokeniser.tokeniseKeywords(line);
-            List<Token> result = Tokeniser.resolveBlobs(tokensWithBlobs);
+            List<Token> tokensWithBlobs = TopLevelTokeniser.tokeniseKeywords(line);
+            List<Token> result = TopLevelTokeniser.resolveBlobs(tokensWithBlobs);
 
             // then
             assertThat(result).isEqualTo(expectedTokens);
@@ -261,7 +261,7 @@ class TokeniserTest {
             );
 
             // when then
-            assertThatThrownBy(() -> Tokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> TopLevelTokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
                     .hasMessage("sth went wrong while parsing blobs");
         }
 
@@ -273,7 +273,7 @@ class TokeniserTest {
             );
 
             // when then
-            assertThatThrownBy(() -> Tokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> TopLevelTokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
                     .hasMessage("could not parse IF body");
         }
 
@@ -285,7 +285,7 @@ class TokeniserTest {
             );
 
             // when then
-            assertThatThrownBy(() -> Tokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> TopLevelTokeniser.resolveBlobs(tokens)).isInstanceOf(RuntimeException.class)
                     .hasMessage("this does not look like a correct assignment");
         }
 

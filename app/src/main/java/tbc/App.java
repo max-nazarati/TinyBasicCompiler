@@ -1,7 +1,7 @@
 package tbc;
 
 import tbc.lexer.Line;
-import tbc.lexer.Tokeniser;
+import tbc.lexer.TopLevelTokeniser;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -18,7 +18,7 @@ public class App {
             List<Line> lines = IntStream.range(0, lineStrings.size()).mapToObj(i -> new Line(i + 1, lineStrings.get(i))).toList();
 
             lines.stream()
-                    .map(Tokeniser::tokeniseLine).toList();
+                    .map(TopLevelTokeniser::tokeniseLine).toList();
         } catch (FileNotFoundException e) {
             throw new RuntimeException("FILE READER EXCEPTION");
         }

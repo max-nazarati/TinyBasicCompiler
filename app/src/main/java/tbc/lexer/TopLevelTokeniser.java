@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Tokeniser {
+public class TopLevelTokeniser {
 
-    private Tokeniser() {
+    private TopLevelTokeniser() {
 
     }
 

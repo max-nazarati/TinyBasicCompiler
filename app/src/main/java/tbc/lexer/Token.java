@@ -11,7 +11,7 @@ public class Token {
     private final String value;
     private final TokenType type;
 
-    protected Token(int row, int column, String value, TokenType type) {
+    public Token(int row, int column, String value, TokenType type) {
         this.row = row;
         this.customRow = row;
         this.column = column;
@@ -19,7 +19,7 @@ public class Token {
         this.type = type;
     }
 
-    protected Token(int row, int customRow, int column, String value, TokenType type) {
+    public Token(int row, int customRow, int column, String value, TokenType type) {
         this.row = row;
         this.customRow = customRow;
         this.column = column;

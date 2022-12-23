@@ -16,8 +16,8 @@ public class ExpressionTokeniser {
             throw new RuntimeException("tried parsing expression but token was not an expression instance");
         }
 
-        Function<Character, Character> f = c -> c == '-' || c == '+' ? c : '';
-        int firstSign = f.apply(expression.value().charAt(0), 0);
+//        Function<Character, Character> f = c -> c == '-' || c == '+' ? c : '';
+//        int firstSign = f.apply(expression.value().charAt(0), 0);
 
         Optional<Integer> firstIndexOfMinus = safeSupplierWrapper(() -> expression.value().indexOf('-'), -1);
         Optional<Integer> lastIndexOfMinus = safeSupplierWrapper(() -> expression.value().lastIndexOf('-'), -1);
@@ -37,6 +37,8 @@ public class ExpressionTokeniser {
 
         Optional<Integer> lastSignIndex = lastIndexOfMinus.map(mIndex -> Math.min(mIndex, lastIndexOfPlus.orElse(mIndex)))
                 .or(() -> lastIndexOfPlus);
+
+        return null;
 
     }
 

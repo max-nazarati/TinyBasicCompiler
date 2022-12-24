@@ -12,7 +12,7 @@ public class ExpressionTokeniser {
     }
 
     public List<Token> tokeniseExpression(Token expression) {
-        if (!expression.tokenType().equals(TokenType.EXPRESSION)) {
+        if (!expression.type().equals(TokenType.EXPRESSION)) {
             throw new RuntimeException("tried parsing expression but token was not an expression instance");
         }
 

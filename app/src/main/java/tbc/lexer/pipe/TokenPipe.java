@@ -26,7 +26,7 @@ public record TokenPipe(Stream<Token> tokens, PipeState state) {
         Token previousToken = tokenList.get(0);
 
         for (Token t : tokenList) {
-            if (t.tokenType().equals(TokenType.BLOB)) {
+            if (t.type().equals(TokenType.BLOB)) {
                 Stream<Token> distilledBlob = resolveBlob(previousToken, t);
                 tokensWithoutBlobs = Stream.concat(tokensWithoutBlobs, distilledBlob);
             } else {

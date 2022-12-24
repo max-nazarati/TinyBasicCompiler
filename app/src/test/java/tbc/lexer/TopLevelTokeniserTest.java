@@ -25,11 +25,11 @@ class TopLevelTokeniserTest {
         void tokeniseLine(int customRow, String lineString) {
             // given
             var line = new Line(2, lineString);
-            var expectedToken = Stream.of(new Token(2, customRow, 0, lineString, TokenType.LINE));
+            var expectedToken = List.of(new Token(2, customRow, 0, lineString, TokenType.LINE));
 
             // when
             LinePipe linePipe = new LinePipe(List.of(line));
-            var result = linePipe.toTokenPipe().tokens();
+            var result = linePipe.toTokenPipe().tokens().toList();
 
             // then
             assertThat(result).isEqualTo(expectedToken);
@@ -42,7 +42,7 @@ class TopLevelTokeniserTest {
             LinePipe linePipe = new LinePipe(List.of(line));
 
             // when THEN
-            assertThatThrownBy(linePipe::toTokenPipe).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> linePipe.toTokenPipe().tokens().toList()).isInstanceOf(RuntimeException.class)
                     .hasMessage("line <1> is could not be parsed");
         }
 
@@ -53,7 +53,7 @@ class TopLevelTokeniserTest {
             LinePipe linePipe = new LinePipe(List.of(line));
 
             // when THEN
-            assertThatThrownBy(linePipe::toTokenPipe).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> linePipe.toTokenPipe().tokens().toList()).isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("line <1> is could not be parsed");
         }
 
@@ -96,7 +96,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(Stream.of(line));
 
             // when THEN
-            assertThatThrownBy(tokenPipe::tokeniseKeywords)
+            assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList())
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("unexpected keyword found at <1:5>");
         }
@@ -128,7 +128,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(Stream.of(line));
 
             // when THEN
-            assertThatThrownBy(tokenPipe::tokeniseKeywords)
+            assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList())
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("unexpected keyword found at <1:10>");
         }
@@ -154,7 +154,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(Stream.of(line));
 
             // when THEN
-            assertThatThrownBy(tokenPipe::tokeniseKeywords).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList()).isInstanceOf(RuntimeException.class)
                     .hasMessage("text was found after a parameterless keyword at <1:0>");
         }
 
@@ -165,7 +165,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(Stream.of(line));
 
             // when THEN
-            assertThatThrownBy(tokenPipe::tokeniseKeywords)
+            assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList()) // are java streams lazy?? i need to do a .toList() in order for it to actually throw something
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -274,7 +274,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(tokens.stream());
 
             // when then
-            assertThatThrownBy(tokenPipe::tokeniseKeywords).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(tokenPipe::resolveBlobs).isInstanceOf(RuntimeException.class)
                     .hasMessage("sth went wrong while parsing blobs");
         }
 
@@ -287,7 +287,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(tokens.stream());
 
             // when then
-            assertThatThrownBy(tokenPipe::tokeniseKeywords).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(tokenPipe::resolveBlobs).isInstanceOf(RuntimeException.class)
                     .hasMessage("could not parse IF body");
         }
 
@@ -300,7 +300,7 @@ class TopLevelTokeniserTest {
             var tokenPipe = new TokenPipe(tokens.stream());
 
             // when then
-            assertThatThrownBy(tokenPipe::tokeniseKeywords).isInstanceOf(RuntimeException.class)
+            assertThatThrownBy(tokenPipe::resolveBlobs).isInstanceOf(RuntimeException.class)
                     .hasMessage("this does not look like a correct assignment");
         }
 

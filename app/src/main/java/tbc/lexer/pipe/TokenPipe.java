@@ -22,9 +22,10 @@ public record TokenPipe(Stream<Token> tokens, PipeState state) {
 
     public TokenPipe resolveBlobs() {
         Stream<Token> tokensWithoutBlobs = Stream.empty();
-        Token previousToken = tokens.toList().get(0);
+        List<Token> tokenList = this.tokens.toList();
+        Token previousToken = tokenList.get(0);
 
-        for (Token t : tokens.toList()) {
+        for (Token t : tokenList) {
             if (t.tokenType().equals(TokenType.BLOB)) {
                 Stream<Token> distilledBlob = resolveBlob(previousToken, t);
                 tokensWithoutBlobs = Stream.concat(tokensWithoutBlobs, distilledBlob);

@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TopLevelTokeniserTest {
 
     @Nested
-    class LineTokenisation {
+    class LineTokenisationTests {
 
         @ParameterizedTest
         @MethodSource("argsProvider")
@@ -70,7 +70,7 @@ class TopLevelTokeniserTest {
     }
 
     @Nested
-    class KeywordTokenisation {
+    class KeywordTokenisationTests {
 
         @Test
         void tokenisePrint() {
@@ -172,7 +172,7 @@ class TopLevelTokeniserTest {
     }
 
     @Nested
-    class BlobResolution {
+    class BlobResolutionTests {
 
         @Test
         void ifElseBlobs() {

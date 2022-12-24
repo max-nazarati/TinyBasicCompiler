@@ -10,17 +10,37 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public record TokenPipe(Stream<Token> tokens, PipeState state) {
+public class TokenPipe implements Pipe {
+    private final Stream<Token> tokens;
+    private final PipeState state;
+
+    public TokenPipe(Stream<Token> tokens, Pipe previous) {
+        this.tokens = tokens;
+        this.state = previous.state().next();
+    }
 
     public TokenPipe(Stream<Token> tokens) {
-        this(tokens, PipeState.INIT);
+        this.tokens = tokens;
+        this.state = PipeState.INIT;
+    }
+
+    public Stream<Token> tokens() {
+        return tokens;
+    }
+
+    public PipeState state() {
+        return state;
     }
 
     public TokenPipe tokeniseKeywords() {
-        return new TokenPipe(tokens.flatMap(this::tokeniseKeywords), state.next());
+        stateGuard(PipeState.WITH_LINES);
+
+        return new TokenPipe(tokens.flatMap(this::tokeniseKeywords), this);
     }
 
     public TokenPipe resolveBlobs() {
+        stateGuard(PipeState.WITH_TOP_LVL_KEYWORDS);
+
         Stream<Token> tokensWithoutBlobs = Stream.empty();
         List<Token> tokenList = this.tokens.toList();
         Token previousToken = tokenList.get(0);
@@ -35,10 +55,18 @@ public record TokenPipe(Stream<Token> tokens, PipeState state) {
             }
         }
 
-        return new TokenPipe(tokensWithoutBlobs, state.next());
+        return new TokenPipe(tokensWithoutBlobs, this);
     }
 
 
+    private void stateGuard(PipeState expectedState) {
+        if (state != expectedState) {
+            String className = this.getClass().getName();
+            String methodName = className + "#" + Thread.currentThread().getStackTrace()[2].getMethodName();
+
+            throw new RuntimeException("pipeline state and does not allow the invocation of [%s]".formatted(methodName));
+        }
+    }
 
     private Stream<Token> resolveBlob(Token previousToken, Token t) {
         Stream<Token> result;
@@ -80,6 +108,7 @@ public record TokenPipe(Stream<Token> tokens, PipeState state) {
         return result;
 
     }
+
     private Stream<Token> tokeniseKeywords(Token line) {
         int firstWhitespace = line.value().indexOf(' ');
         firstWhitespace = firstWhitespace == -1 ? line.value().length() : firstWhitespace;

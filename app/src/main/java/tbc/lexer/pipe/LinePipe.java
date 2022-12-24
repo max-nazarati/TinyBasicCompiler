@@ -9,10 +9,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record LinePipe(List<Line> lines) {
+public record LinePipe(List<Line> lines) implements Pipe {
+    private static final PipeState state = PipeState.INIT;
 
     public TokenPipe toTokenPipe() {
         return new TokenPipe(lines.stream().map(this::tokeniseLine));
+    }
+
+    public PipeState state() {
+        return state;
     }
 
     private Token tokeniseLine(Line line) {

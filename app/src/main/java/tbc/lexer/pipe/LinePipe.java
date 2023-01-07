@@ -13,7 +13,7 @@ public record LinePipe(List<Line> lines) implements Pipe {
     private static final PipeState state = PipeState.INIT;
 
     public TokenPipe toTokenPipe() {
-        return new TokenPipe(lines.stream().map(this::tokeniseLine));
+        return new TokenPipe(lines.stream().map(this::tokeniseLine), this);
     }
 
     public PipeState state() {

@@ -19,11 +19,6 @@ public class TokenPipe implements Pipe {
         this.state = previous.state().next();
     }
 
-    public TokenPipe(Stream<Token> tokens) {
-        this.tokens = tokens;
-        this.state = PipeState.INIT;
-    }
-
     public Stream<Token> tokens() {
         return tokens;
     }
@@ -64,7 +59,7 @@ public class TokenPipe implements Pipe {
             String className = this.getClass().getName();
             String methodName = className + "#" + Thread.currentThread().getStackTrace()[2].getMethodName();
 
-            throw new RuntimeException("pipeline state and does not allow the invocation of [%s]".formatted(methodName));
+            throw new RuntimeException("pipeline state does not allow the invocation of [%s]".formatted(methodName));
         }
     }
 

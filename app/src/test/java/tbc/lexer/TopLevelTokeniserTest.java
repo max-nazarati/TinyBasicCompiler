@@ -80,7 +80,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "PRINT", TokenType.KEYWORD),
                     new Token(1, 5, " alasdj adf 23420 lkjjsf", TokenType.BLOB)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), new LinePipe(List.of()));
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().tokens().toList();

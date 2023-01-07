@@ -11,12 +11,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class TokenPipe implements Pipe {
+
     private final Stream<Token> tokens;
     private final PipeState state;
 
-    public TokenPipe(Stream<Token> tokens, Pipe previous) {
+    public TokenPipe(Stream<Token> tokens, PipeState initialState) {
         this.tokens = tokens;
-        this.state = previous.state().next();
+        this.state = initialState;
     }
 
     public Stream<Token> tokens() {
@@ -30,7 +31,7 @@ public class TokenPipe implements Pipe {
     public TokenPipe tokeniseKeywords() {
         stateGuard(PipeState.WITH_LINES);
 
-        return new TokenPipe(tokens.flatMap(this::tokeniseKeywords), this);
+        return new TokenPipe(tokens.flatMap(this::tokeniseKeywords), state.next());
     }
 
     public TokenPipe resolveBlobs() {
@@ -50,9 +51,8 @@ public class TokenPipe implements Pipe {
             }
         }
 
-        return new TokenPipe(tokensWithoutBlobs, this);
+        return new TokenPipe(tokensWithoutBlobs, state.next());
     }
-
 
     private void stateGuard(PipeState expectedState) {
         if (state != expectedState) {

@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import tbc.lexer.pipe.LinePipe;
+import tbc.lexer.pipe.PipeState;
 import tbc.lexer.pipe.TokenPipe;
 
 import java.util.List;
@@ -80,7 +81,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "PRINT", TokenType.KEYWORD),
                     new Token(1, 5, " alasdj adf 23420 lkjjsf", TokenType.BLOB)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line), new LinePipe(List.of()));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().tokens().toList();
@@ -93,7 +94,7 @@ class TopLevelTokeniserTest {
         void throwsIfKeywordAfterPrint() {
             // given
             var line = new Token(1, 0, "PRINT IF a", TokenType.LINE);
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when THEN
             assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList())
@@ -111,7 +112,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 14, "THEN", TokenType.KEYWORD),
                     new Token(1, 18, " 23420 lkjjsf", TokenType.BLOB)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().tokens().toList();
@@ -125,7 +126,7 @@ class TopLevelTokeniserTest {
             // given
             // TODO wrong column calculation in error message
             var line = new Token(1, 0, "IF a THEN THEN", TokenType.LINE);
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when THEN
             assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList())
@@ -138,7 +139,7 @@ class TopLevelTokeniserTest {
         void parameterLessKeywords(String keyword) {
             // given
             var line = new Token(1, 0, keyword, TokenType.LINE);
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().tokens().toList();
@@ -151,7 +152,7 @@ class TopLevelTokeniserTest {
         void parameterlessKeywordThrowsWhenParameters() {
             // given
             var line = new Token(1, 0, "RETURN 1", TokenType.LINE);
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when THEN
             assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList()).isInstanceOf(RuntimeException.class)
@@ -162,7 +163,7 @@ class TopLevelTokeniserTest {
         void throwsIfInvalidKeyword() {
             // given
             var line = new Token(1, 0, "PRI IF a", TokenType.LINE);
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when THEN
             assertThatThrownBy(() -> tokenPipe.tokeniseKeywords().tokens().toList()) // are java streams lazy?? i need to do a .toList() in order for it to actually throw something
@@ -186,7 +187,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 16, "THEN", TokenType.KEYWORD),
                     new Token(1, 21, "23420 lkjjsf", TokenType.STATEMENT)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().resolveBlobs().tokens().toList();
@@ -203,7 +204,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "GOTO", TokenType.KEYWORD),
                     new Token(1, 5, "some commands", TokenType.EXPRESSION)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().resolveBlobs().tokens().toList();
@@ -220,7 +221,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "INPUT", TokenType.KEYWORD),
                     new Token(1, 6, "some commands", TokenType.VAR_LST)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().resolveBlobs().tokens().toList();
@@ -237,7 +238,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "PRINT", TokenType.KEYWORD),
                     new Token(1, 6, "some commands", TokenType.EXPR_LST)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().resolveBlobs().tokens().toList();
@@ -256,7 +257,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 4, "a", TokenType.VAR),
                     new Token(1, 8, "10", TokenType.EXPRESSION)
             );
-            var tokenPipe = new TokenPipe(Stream.of(line));
+            var tokenPipe = new TokenPipe(Stream.of(line), PipeState.WITH_LINES);
 
             // when
             List<Token> result = tokenPipe.tokeniseKeywords().resolveBlobs().tokens().toList();
@@ -271,7 +272,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "LETT", TokenType.KEYWORD),
                     new Token(1, 0, " a = b", TokenType.BLOB)
             );
-            var tokenPipe = new TokenPipe(tokens.stream());
+            var tokenPipe = new TokenPipe(tokens.stream(), PipeState.WITH_TOP_LVL_KEYWORDS);
 
             // when then
             assertThatThrownBy(tokenPipe::resolveBlobs).isInstanceOf(RuntimeException.class)
@@ -284,7 +285,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "IF", TokenType.KEYWORD),
                     new Token(1, 0, " a <= b", TokenType.BLOB)
             );
-            var tokenPipe = new TokenPipe(tokens.stream());
+            var tokenPipe = new TokenPipe(tokens.stream(), PipeState.WITH_TOP_LVL_KEYWORDS);
 
             // when then
             assertThatThrownBy(tokenPipe::resolveBlobs).isInstanceOf(RuntimeException.class)
@@ -297,7 +298,7 @@ class TopLevelTokeniserTest {
                     new Token(1, 0, "LET", TokenType.KEYWORD),
                     new Token(1, 0, " a == b", TokenType.BLOB)
             );
-            var tokenPipe = new TokenPipe(tokens.stream());
+            var tokenPipe = new TokenPipe(tokens.stream(), PipeState.WITH_TOP_LVL_KEYWORDS);
 
             // when then
             assertThatThrownBy(tokenPipe::resolveBlobs).isInstanceOf(RuntimeException.class)

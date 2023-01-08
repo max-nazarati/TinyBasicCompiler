@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record TokenPipe(List<List<Character>> lines, List<Token> tokens) implements Pipe {
+public record Tokeniser(List<List<Character>> lines, List<Token> tokens) implements Pipe {
 
-    public TokenPipe(BufferedReader reader) {
+    public Tokeniser(BufferedReader reader) {
         this(toLinesOfChars(reader), List.of());
     }
 
@@ -16,7 +16,7 @@ public record TokenPipe(List<List<Character>> lines, List<Token> tokens) impleme
         return textBuffer.lines().map(l -> l.chars().mapToObj(c -> (char) c).toList()).toList();
     }
 
-    public TokenPipe tokenise() {
+    public Tokeniser tokenise() {
         var tempTokens = new ArrayList<Token>();
         boolean someChange = true;
         while (someChange) {
@@ -26,13 +26,16 @@ public record TokenPipe(List<List<Character>> lines, List<Token> tokens) impleme
                 for (int column = 0; column < lines.get(row).size(); column++) {
                     List<Character> line = lines.get(row);
                     Character c = line.get(column);
-                    List<Character>  restOfLine = line.subList(column, line.size());
+                    List<Character> restOfLine = line.subList(column + 1, line.size());
 
                     if (Character.isWhitespace(c)) {
                         tempTokens.add(new Token(id, row, column, TokenType.WHITESPACE, new Lexeme(c)));
 
                     } else if (Character.isDigit(c)) {
-                        String acc = restOfLine.stream().takeWhile(Character::isDigit).map(Object::toString).collect(Collectors.joining());
+                        String acc = c + restOfLine.stream()
+                                .takeWhile(Character::isDigit)
+                                .map(Object::toString)
+                                .collect(Collectors.joining());
                         if (!Character.isWhitespace(line.get(column + acc.length()))) {
                             throw new RuntimeException("[%d : %d] failed parsing number, only integers are supported".formatted(
                                     row,
@@ -43,7 +46,7 @@ public record TokenPipe(List<List<Character>> lines, List<Token> tokens) impleme
                         column += acc.length() - 1;
 
                     } else if (Character.isUpperCase(c)) {
-                        String acc = restOfLine.stream()
+                        String acc = c + restOfLine.stream()
                                 .takeWhile(Character::isUpperCase)
                                 .map(Object::toString)
                                 .collect(Collectors.joining());
@@ -57,14 +60,22 @@ public record TokenPipe(List<List<Character>> lines, List<Token> tokens) impleme
                         tempTokens.add(new Token(id, row, column, type, new Lexeme(acc)));
                         column += acc.length() - 1;
 
+                    } else if (c == '"') {
+                        int closingQuotation = restOfLine.indexOf('"');
+                        if (closingQuotation == -1) {
+                            throw new RuntimeException("[%d : %d] could not find a matching closing quotation mark".formatted(row, column));
+                        }
+                        String s = restOfLine.subList(0, closingQuotation).stream().map(Object::toString).collect(Collectors.joining());
+                        tempTokens.add(new Token(id, row, column, TokenType.STRING, new Lexeme(s)));
+                        column += closingQuotation + 1;
                     } else {
-                        tempTokens.add(new Token(id, row, column, TokenType.BLOB, new Lexeme(c)));
+                        throw new RuntimeException("[%d : %d] unexpected character".formatted(row, column));
                     }
 
                     id++;
                 }
             }
         }
-        return new TokenPipe(lines, Collections.unmodifiableList(tempTokens));
+        return new Tokeniser(lines, Collections.unmodifiableList(tempTokens));
     }
 }

@@ -6,6 +6,5 @@ public enum TokenType {
     OPERATOR,
     NUMBER,
     STRING,
-    VARIABLE,
-    BLOB
+    VARIABLE
 }

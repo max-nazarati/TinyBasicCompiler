@@ -1,11 +1,11 @@
 package tbc.lexer;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.List;
 
 public enum Keyword {
-    IF("IF"),
     PRINT("PRINT"),
+    IF("IF"),
     THEN("THEN"),
     GOTO("GOTO"),
     INPUT("INPUT"),
@@ -17,17 +17,14 @@ public enum Keyword {
     RUN("RUN"),
     END("END");
 
-    private final String name;
+    private final Lexeme lexeme;
 
-    public String getName() {
-        return name;
+    public static List<String> lexemes() {
+        return Arrays.stream(Keyword.values()).map(x -> x.lexeme.stringValue()).toList();
+
     }
 
-    public static Stream<String> names() {
-        return Arrays.stream(Keyword.values()).map(Keyword::getName);
-    }
-
-    Keyword(String name) {
-        this.name = name;
+    private Keyword(String lexeme) {
+        this.lexeme = new Lexeme(lexeme);
     }
 }

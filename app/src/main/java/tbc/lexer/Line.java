@@ -1,5 +1,7 @@
 package tbc.lexer;
 
-public record Line(int row, String contents) {
+import java.util.List;
+
+public record Line(int row, List<Character> text) {
 
 }

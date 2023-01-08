@@ -1,14 +1,11 @@
 package tbc.lexer;
 
 public enum TokenType {
-    LINE,
+    WHITESPACE,
     KEYWORD,
-    EXPRESSION,
-    EXPR_LST,
-    VAR_LST,
-    BLOB,
-    RELOP,
-    STATEMENT,
-    ASSIGNMENT,
-    VAR
+    OPERATOR,
+    NUMBER,
+    STRING,
+    VARIABLE,
+    BLOB
 }

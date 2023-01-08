@@ -1,12 +1,15 @@
 package tbc.lexer;
 
+import tbc.enums.Keyword;
+import tbc.enums.TokenType;
+
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record Tokeniser(List<List<Character>> lines, List<Token> tokens) implements Pipe {
+public record Tokeniser(List<List<Character>> lines, List<Token> tokens) {
 
     public Tokeniser(BufferedReader reader) {
         this(toLinesOfChars(reader), List.of());
@@ -36,7 +39,7 @@ public record Tokeniser(List<List<Character>> lines, List<Token> tokens) impleme
                                 .takeWhile(Character::isDigit)
                                 .map(Object::toString)
                                 .collect(Collectors.joining());
-                        if (!Character.isWhitespace(line.get(column + acc.length()))) {
+                        if (!isNextCharWhitespace(column, acc, line)) {
                             throw new RuntimeException("[%d : %d] failed parsing number, only integers are supported".formatted(
                                     row,
                                     column
@@ -50,7 +53,7 @@ public record Tokeniser(List<List<Character>> lines, List<Token> tokens) impleme
                                 .takeWhile(Character::isUpperCase)
                                 .map(Object::toString)
                                 .collect(Collectors.joining());
-                        if (!Character.isWhitespace(line.get(column + acc.length()))) {
+                        if (!isNextCharWhitespace(column, acc, line)) {
                             throw new RuntimeException("[%d : %d] unexpected char after KEYWORD/VARIABLE".formatted(
                                     row,
                                     column
@@ -78,4 +81,13 @@ public record Tokeniser(List<List<Character>> lines, List<Token> tokens) impleme
         }
         return new Tokeniser(lines, Collections.unmodifiableList(tempTokens));
     }
+
+    private boolean isNextCharWhitespace(int column, String acc, List<Character> line) {
+        if (acc.length() == 1) {
+            return column == line.size() - 1 || Character.isWhitespace(line.get(column + 1));
+        }
+
+        return Character.isWhitespace(line.get(column + acc.length()));
+    }
+
 }

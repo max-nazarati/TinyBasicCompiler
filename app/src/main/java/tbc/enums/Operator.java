@@ -1,4 +1,6 @@
-package tbc.lexer;
+package tbc.enums;
+
+import tbc.lexer.Lexeme;
 
 public enum Operator {
     ADD('+'),

@@ -1,4 +1,4 @@
-package tbc.lexer;
+package tbc.enums;
 
 public enum TokenType {
     WHITESPACE,

@@ -1,4 +1,6 @@
-package tbc.lexer;
+package tbc.enums;
+
+import tbc.lexer.Lexeme;
 
 import java.util.Arrays;
 import java.util.List;
